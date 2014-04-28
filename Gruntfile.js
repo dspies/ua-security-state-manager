@@ -18,11 +18,26 @@ module.exports = function (grunt) {
   // Define the configuration for all the tasks
   grunt.initConfig({
 
+    pkg: grunt.file.readJSON('package.json'),
+    meta: {
+      banner: [
+        '/**',
+        ' * <%= pkg.description %>',
+        ' * @version v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>',
+        ' * @link <%= pkg.homepage %>',
+        ' * @author <%= pkg.author %>',
+        ' * @license MIT License, http://www.opensource.org/licenses/MIT',
+        ' */'
+      ].join('\n')
+    },
+
     // Project settings
     yeoman: {
       // configurable paths
       app: require('./bower.json').appPath || 'app',
-      dist: 'dist-app'
+      appDist: 'dist-app',
+      dist: 'dist',
+      staging: 'staging'
     },
 
     // Watches files for changes and runs tasks based on the changed files
@@ -99,9 +114,9 @@ module.exports = function (grunt) {
           ]
         }
       },
-      dist: {
+      appDist: {
         options: {
-          base: '<%= yeoman.dist %>'
+          base: '<%= yeoman.appDist %>'
         }
       }
     },
@@ -116,27 +131,38 @@ module.exports = function (grunt) {
         'Gruntfile.js',
         '<%= yeoman.app %>/scripts/{,*/}*.js'
       ],
+      gruntfile: [
+        'Gruntfile.js'
+      ],
+      source: [
+        '<%= yeoman.app %>/scripts/services/*.js'
+      ],
       test: {
         options: {
           jshintrc: 'test/.jshintrc'
         },
         src: ['test/spec/{,*/}*.js']
+      },
+      dist: {
+        src: ['<%= yeoman.dist %>/{,*/}*.js']
       }
     },
 
     // Empties folders to start fresh
     clean: {
-      dist: {
+      appDist: {
         files: [{
           dot: true,
           src: [
             '.tmp',
-            '<%= yeoman.dist %>/*',
-            '!<%= yeoman.dist %>/.git*'
+            '<%= yeoman.appDist %>/*',
+            '!<%= yeoman.appDist %>/.git*'
           ]
         }]
       },
-      server: '.tmp'
+      server: '.tmp',
+      staging: '<%= yeoman.staging %>',
+      dist: '<%= yeoman.dist %>'
     },
 
     // Add vendor prefixed styles
@@ -144,7 +170,7 @@ module.exports = function (grunt) {
       options: {
         browsers: ['last 1 version']
       },
-      dist: {
+      appDist: {
         files: [{
           expand: true,
           cwd: '.tmp/styles/',
@@ -183,9 +209,9 @@ module.exports = function (grunt) {
         assetCacheBuster: false,
         raw: 'Sass::Script::Number.precision = 10\n'
       },
-      dist: {
+      appDist: {
         options: {
-          generatedImagesDir: '<%= yeoman.dist %>/images/generated'
+          generatedImagesDir: '<%= yeoman.appDist %>/images/generated'
         }
       },
       server: {
@@ -197,13 +223,13 @@ module.exports = function (grunt) {
 
     // Renames files for browser caching purposes
     rev: {
-      dist: {
+      appDist: {
         files: {
           src: [
-            '<%= yeoman.dist %>/scripts/{,*/}*.js',
-            '<%= yeoman.dist %>/styles/{,*/}*.css',
-            '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-            '<%= yeoman.dist %>/styles/fonts/*'
+            '<%= yeoman.appDist %>/scripts/{,*/}*.js',
+            '<%= yeoman.appDist %>/styles/{,*/}*.css',
+            '<%= yeoman.appDist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+            '<%= yeoman.appDist %>/styles/fonts/*'
           ]
         }
       }
@@ -215,7 +241,7 @@ module.exports = function (grunt) {
     useminPrepare: {
       html: '<%= yeoman.app %>/index.html',
       options: {
-        dest: '<%= yeoman.dist %>',
+        dest: '<%= yeoman.appDist %>',
         flow: {
           html: {
             steps: {
@@ -230,14 +256,14 @@ module.exports = function (grunt) {
 
     // Performs rewrites based on rev and the useminPrepare configuration
     usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
+      html: ['<%= yeoman.appDist %>/{,*/}*.html'],
+      css: ['<%= yeoman.appDist %>/styles/{,*/}*.css'],
       options: {
-        assetsDirs: ['<%= yeoman.dist %>']
+        assetsDirs: ['<%= yeoman.appDist %>']
       }
     },
 
-    // The following *-min tasks produce minified files in the dist folder
+    // The following *-min tasks produce minified files in the appDist folder
     cssmin: {
       options: {
         root: '<%= yeoman.app %>'
@@ -245,29 +271,29 @@ module.exports = function (grunt) {
     },
 
     imagemin: {
-      dist: {
+      appDist: {
         files: [{
           expand: true,
           cwd: '<%= yeoman.app %>/images',
           src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= yeoman.dist %>/images'
+          dest: '<%= yeoman.appDist %>/images'
         }]
       }
     },
 
     svgmin: {
-      dist: {
+      appDist: {
         files: [{
           expand: true,
           cwd: '<%= yeoman.app %>/images',
           src: '{,*/}*.svg',
-          dest: '<%= yeoman.dist %>/images'
+          dest: '<%= yeoman.appDist %>/images'
         }]
       }
     },
 
     htmlmin: {
-      dist: {
+      appDist: {
         options: {
           collapseWhitespace: true,
           collapseBooleanAttributes: true,
@@ -276,9 +302,9 @@ module.exports = function (grunt) {
         },
         files: [{
           expand: true,
-          cwd: '<%= yeoman.dist %>',
+          cwd: '<%= yeoman.appDist %>',
           src: ['*.html', 'views/{,*/}*.html'],
-          dest: '<%= yeoman.dist %>'
+          dest: '<%= yeoman.appDist %>'
         }]
       }
     },
@@ -287,31 +313,39 @@ module.exports = function (grunt) {
     // using the Angular long form for dependency injection. It doesn't work on
     // things like resolve or inject so those have to be done manually.
     ngmin: {
-      dist: {
+      appDist: {
         files: [{
           expand: true,
           cwd: '.tmp/concat/scripts',
           src: '*.js',
           dest: '.tmp/concat/scripts'
         }]
+      },
+      staging: {
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.staging %>',
+          src: '<%= pkg.name %>.js',
+          dest: '<%= yeoman.staging %>/ngmin'
+        }]
       }
     },
 
     // Replace Google CDN references
     cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/*.html']
+      appDist: {
+        html: ['<%= yeoman.appDist %>/*.html']
       }
     },
 
     // Copies remaining files to places other tasks can use
     copy: {
-      dist: {
+      appDist: {
         files: [{
           expand: true,
           dot: true,
           cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
+          dest: '<%= yeoman.appDist %>',
           src: [
             '*.{ico,png,txt}',
             '.htaccess',
@@ -323,7 +357,7 @@ module.exports = function (grunt) {
         }, {
           expand: true,
           cwd: '.tmp/images',
-          dest: '<%= yeoman.dist %>/images',
+          dest: '<%= yeoman.appDist %>/images',
           src: ['generated/*']
         }]
       },
@@ -332,6 +366,30 @@ module.exports = function (grunt) {
         cwd: '<%= yeoman.app %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
+      },
+      dist: {
+        files: [{
+          expand: true,
+          dot: true,
+          cwd: '<%= yeoman.staging %>/ngmin',
+          dest: '<%= yeoman.dist %>',
+          src: [
+            '<%= pkg.name %>.js'
+          ]
+        }]
+      },
+      staging: {
+        files: [{
+          expand: true,
+          dot: true,
+          flatten: true,
+          filter: 'isFile',
+          cwd: '<%= yeoman.app %>/scripts',
+          dest: '<%= yeoman.staging %>/',
+          src: [
+            '**'
+          ]
+        }]
       }
     },
 
@@ -343,8 +401,8 @@ module.exports = function (grunt) {
       test: [
         'compass'
       ],
-      dist: [
-        'compass:dist',
+      appDist: [
+        'compass:appDist',
         'imagemin',
         'svgmin'
       ]
@@ -354,27 +412,67 @@ module.exports = function (grunt) {
     // minification. These next options are pre-configured if you do not wish
     // to use the Usemin blocks.
     // cssmin: {
-    //   dist: {
+    //   appDist: {
     //     files: {
-    //       '<%= yeoman.dist %>/styles/main.css': [
+    //       '<%= yeoman.appDist %>/styles/main.css': [
     //         '.tmp/styles/{,*/}*.css',
     //         '<%= yeoman.app %>/styles/{,*/}*.css'
     //       ]
     //     }
     //   }
     // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
+
+    //Minify the release code
+    uglify: {
+      dist: {
+        options: {
+          sourceMap: '<%= yeoman.dist %>/<%= pkg.name %>.map'
+        },
+        files: {
+          '<%= yeoman.dist %>/<%= pkg.name %>.min.js': ['<%= yeoman.dist %>/<%= pkg.name %>.js']
+        }
+      }
+    },
+    concat: {
+      options: {
+        stripBanners: true,
+        banner: [
+          '<%= meta.banner %>',
+          '(function(){',
+          '\t\'use strict\';',
+          ''
+        ].join('\n'),
+        footer: '\n}());',
+        process: function(src){
+          return src
+              .replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1')
+              .replace(/(^|\n)/g, '\n\t');
+        }
+      },
+      staging: {
+        src: [
+          '<%= yeoman.staging %>/stateManager.js'
+        ],
+        dest: '<%= yeoman.dist %>/<%= pkg.name %>.js'
+      }
+    },
+
+    //bumps the version before a release
+    bump: {
+      options: {
+        files:          ['package.json',  'bower.json'],
+        updateConfigs:  ['pkg'],
+        commit: true,
+        commitMessage: 'Release v%VERSION%',
+        commitFiles: ['package.json', 'bower.json', 'dist'],
+        createTag: true,
+        tagName: 'v%VERSION%',
+        tagMessage: 'Version %VERSION%',
+        push: true,
+        pushTo: 'origin',
+        gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d' // options to use with '$ git describe'
+      }
+    },
 
     // Test settings
     karma: {
@@ -388,8 +486,8 @@ module.exports = function (grunt) {
   grunt.registerTask('dev', 'watch:dev');
 
   grunt.registerTask('serve', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
+    if (target === 'appDist') {
+      return grunt.task.run(['build', 'connect:appDist:keepalive']);
     }
 
     grunt.task.run([
@@ -407,7 +505,7 @@ module.exports = function (grunt) {
     grunt.task.run(['serve:' + target]);
   });
 
-  grunt.registerTask('test', [
+  grunt.registerTask('test-app', [
     'clean:server',
     'concurrent:test',
     'autoprefixer',
@@ -415,15 +513,15 @@ module.exports = function (grunt) {
     'karma'
   ]);
 
-  grunt.registerTask('build', [
-    'clean:dist',
+  grunt.registerTask('build-app', [
+    'clean:appDist',
     'bowerInstall',
     'useminPrepare',
-    'concurrent:dist',
+    'concurrent:appDist',
     'autoprefixer',
     'concat',
     'ngmin',
-    'copy:dist',
+    'copy:appDist',
     'cdnify',
     'cssmin',
     'uglify',
@@ -432,9 +530,98 @@ module.exports = function (grunt) {
     'htmlmin'
   ]);
 
-  grunt.registerTask('default', [
-    'newer:jshint',
-    'test',
-    'build'
+  grunt.registerTask('add-dist-git', function(){
+    return exec('git add dist').then(function (result) {
+      if (result.stdout.trim() !== ''){
+        throw 'Unable to add dist directory';
+      }
+    });
+  });
+
+  grunt.registerTask('compile', [
+    'clean',            //Runs all clean tasks to clean staging and dist directories
+    'copy:staging',     //Copies files to the staging directory
+    'concat',           //Concatenates specified files in the staging directory
+    'ngmin',            //Makes concatenated Angular code in staging directory min-safe
+    'copy:dist',        //Copies concatenated, min-safe code to dist directory
+    'jshint:dist',      //Lints the code in dist directory
+    'uglify',           //Minifies the code in dist directory and creates a source map
+    'clean:staging'     //Removes the staging directory
   ]);
+
+  grunt.registerTask('unit-test', [
+    'lint',             //Runs jshint on development code (src, test, gruntfile)
+    'karma'             //Runs unit-test using karma
+  ]);
+
+  grunt.registerTask('e2e-test', []);
+
+  grunt.registerTask('lint', [
+    'jshint:gruntfile', //Lints the gruntfile
+    'jshint:source',    //Lints all the files in /app/scripts
+    'jshint:test'       //Lints all the test code in /test/spec using .jshintrc file in test directory
+  ]);
+
+  grunt.registerTask('build', [
+    'unit-test',        //Runs unit tests
+    'e2e-test',         //Runs end-to-end tests
+    'compile'           //Generates distributable files
+  ]);
+
+  grunt.registerTask('release', function (releaseType) {
+
+    if (['major', 'minor', 'patch'].indexOf(releaseType) === -1) {
+      return grunt.util.error('Release type was ' + releaseType + ' but it must be either major, minor, or patch');
+    }
+
+    promising(this,
+        ensureCleanMaster().then(function () {
+          return grunt.task.run(
+                  'bump-only:' + releaseType,
+              'build',
+              'add-dist-git',
+              'bump-commit'
+          );
+        })
+    );
+  });
+
+  grunt.registerTask('ci', [
+    'build'            //test and compile the code
+  ]);
+
+  grunt.registerTask('develop', [
+    'watch:dev'             //Watches /app/scripts and /test/spec for changes and runs unit-test task
+  ]);
+
+  grunt.registerTask('default', [
+    'develop'           //Shortcut to develop task
+  ]);
+
+  // Helpers for custom tasks, mainly around promises / exec
+  var exec = require('faithful-exec');
+
+  function promising(task, promise) {
+    var done = task.async();
+    promise.then(function () {
+      done();
+    }, function (error) {
+      grunt.log.write(error + '\n');
+      done(false);
+    });
+  }
+
+  function ensureCleanMaster() {
+    return exec('git symbolic-ref HEAD').then(function (result) {
+      if (result.stdout.trim() !== 'refs/heads/master') {
+        throw 'Not on master branch, aborting';
+      }
+      return exec('git status --porcelain');
+    }).then(function (result) {
+      if (result.stdout.trim() !== '') {
+        throw 'Working copy is dirty, aborting';
+      }
+    });
+  }
+
 };

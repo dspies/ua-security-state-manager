@@ -1,6 +1,6 @@
 {
   "name": "angular-ua-security-state-manager",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "dependencies": {
     "angular": "1.2.15",
     "angular-ui-router": "~0.2.10",
