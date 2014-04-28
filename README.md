@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/dspies/ua-security-state-manager.png?label=ready&title=Ready)](https://waffle.io/dspies/ua-security-state-manager)
 angular-ua-security-state-manager
 =================================
 
