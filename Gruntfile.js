@@ -1,4 +1,4 @@
-// Generated on 2014-04-28 using generator-angular 0.8.0
+// Generated on 2014-04-25 using generator-angular 0.8.0
 'use strict';
 
 // # Globbing
@@ -57,6 +57,17 @@ module.exports = function (grunt) {
           '<%= yeoman.app %>/{,*/}*.html',
           '.tmp/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+        ]
+      },
+      dev: {
+        files: [
+          '<%= yeoman.app %>/scripts/{,*/}*.js',
+          'test/spec/{,*/}*.js'
+        ],
+        tasks: [
+          'newer:jshint:all',
+          'newer:jshint:test',
+          'karma'
         ]
       }
     },
@@ -374,6 +385,7 @@ module.exports = function (grunt) {
     }
   });
 
+  grunt.registerTask('dev', 'watch:dev');
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {

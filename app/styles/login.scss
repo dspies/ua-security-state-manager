@@ -1,0 +1,31 @@
+.form-signin {
+  max-width: 330px;
+  padding-top: 45px;
+  margin: 0 auto;
+
+  .form-control {
+    position: relative;
+    height: auto;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  input {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border: 0px solid #000000;
+    border-bottom-width: 1px;
+    background-color: transparent;
+
+    &[type="text"] {
+      margin-bottom: -1px;
+    }
+
+    &[type="password"] {
+      margin-bottom: 10px;
+    }
+  }
+}
