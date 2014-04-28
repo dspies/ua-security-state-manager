@@ -5,25 +5,37 @@ describe('Controller: loginController', function () {
   // load the controller's module
   beforeEach(module('example'));
 
+  // in a spec where $state and $urlRouter should be skipped -- ie. a http model
+  beforeEach(module('uiRouterNoop'));
+
   var loginController,
       scope,
       securityService,
       deferred,
-      rootScope;
+      rootScope,
+      stateManager,
+      nextState;
 
-  // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope, _securityService_, $q) {
+  beforeEach(inject(function ($controller, $rootScope, _securityService_, $q, _stateManager_) {
     rootScope = $rootScope;
     scope = rootScope.$new();
     loginController = $controller('loginController', {
       $scope: scope
     });
     securityService = _securityService_;
-
+    stateManager = _stateManager_;
     deferred = $q.defer();
+
+    spyOn(stateManager, 'goToHomeState').andCallFake(function () {
+      nextState = 'home';
+    });
 
     spyOn(securityService, 'login').andReturn(deferred.promise);
   }));
+
+  afterEach(function(){
+    nextState = '';
+  });
 
   it('should show the appropriate message', function () {
     expect(scope.message).toBe('');
@@ -40,7 +52,7 @@ describe('Controller: loginController', function () {
     expect(scope.message).toBe('Invalid username or password');
   });
 
-  it('should show a successful message when login is succesful', function () {
+  it('should redirect to the home state when login is successful', function () {
     var user = {
       username: 'user',
       token: 'myToken',
@@ -52,7 +64,8 @@ describe('Controller: loginController', function () {
     rootScope.$apply();
 
     expect(securityService.login).toHaveBeenCalledWith(user.username, 'password');
-    expect(scope.message).toBe('success');
+    expect(stateManager.goToHomeState).toHaveBeenCalled();
+    expect(nextState).toBe('home');
   });
 
 });

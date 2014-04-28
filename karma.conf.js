@@ -19,6 +19,7 @@ module.exports = function(config) {
       'app/bower_components/ua-security/dist/ua-security.js',
       'app/scripts/app.js',
       'app/scripts/**/*.js',
+      'test/helpers/*.js',
       'test/spec/**/*.js'
     ],
 
