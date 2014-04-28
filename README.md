@@ -1,4 +1,8 @@
+[![Build Status](https://travis-ci.org/dspies/ua-security-state-manager.svg?branch=master)](https://travis-ci.org/dspies/ua-security-state-manager)
 [![Stories in Ready](https://badge.waffle.io/dspies/ua-security-state-manager.png?label=ready&title=Ready)](https://waffle.io/dspies/ua-security-state-manager)
+[![Code Climate](https://codeclimate.com/github/dspies/ua-security-state-manager.png)](https://codeclimate.com/github/dspies/ua-security-state-manager)
+[![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
+
 angular-ua-security-state-manager
 =================================
 
