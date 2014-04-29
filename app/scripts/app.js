@@ -1,10 +1,7 @@
 'use strict';
 
 angular.module('example', ['ua.security', 'ui.router', 'ngMockE2E'])
-  .config(function (authenticationServiceProvider, $stateProvider, $urlRouterProvider) {
-
-    authenticationServiceProvider.setAuthenticationUrl('api/login');
-    authenticationServiceProvider.setLogoutUrl('api/logout');
+  .config(function ($stateProvider, $urlRouterProvider) {
 
     $urlRouterProvider.otherwise('/home');
 
