@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>UA Security State Manager by dspies</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>UA Security State Manager</h1>
+        <h2>State manager service for angular-ua-security package</h2>
+        <a href="https://github.com/dspies/ua-security-state-manager" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>The <code>angular-ua-security-state-manager</code> package is a set of functions that can be used in conjunction with <a href="https://github.com/dspies/ua-security">angular-ua-security</a> to provide authorization for state transitions when using the <a href="https://github.com/angular-ui/ui-router">angular-ui-router</a> package.  It does so by listening for the <code>$stateChangeStart</code> event raised by <a href="https://github.com/angular-ui/ui-router">angular-ui-router</a> before making state transitions.  The event handler determines whether the new state (toState) requires authorization (by evaluating whether the state has a <code>roles</code> property), and if so, checks whether the current user has any of the required roles.  If the user is authorized, the state transition proceeds, otherwise, it is halted and the user is redirected to a configurable unauthorized state.  The package also offers a number of other convienence functions, such as:</p>
+
+<ul>
+<li>
+<code>loggedIn</code>: Returns boolean whether the current user is logged in</li>
+<li>
+<code>authorizedToTransitionTo</code>: Returns boolean whether the current user is authorized to move to a state</li>
+<li>
+<code>stateRequiresAuthorization</code>: Returns boolean whether the state requires authorization</li>
+<li>
+<code>goToHomeState</code>: Uses ui-router's \$state service to transition to the home state</li>
+<li>
+<code>goToLoginState</code>: Uses ui-router's \$state service to transition to the login state </li>
+<li>
+<code>goToUnauthorizedState</code>: Uses ui-router's \$state service to transition to the unauthorized state</li>
+</ul><h2>
+<a name="repository" class="anchor" href="#repository"><span class="octicon octicon-link"></span></a>Repository</h2>
+
+<p>This repository serves two purposes, 1) to build the <code>angular-ua-security-state-manager</code> package and 2) to provide an example of how to use the state manager service with <code>angular-ua-security</code> package.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<ul>
+<li>Bower
+<code>bower install angular-ua-security-state-manager</code>
+</li>
+<li>Git
+<code>git clone git@github.com:dspies/ua-security-state-manager.git</code>
+</li>
+</ul><h2>
+<a name="builds" class="anchor" href="#builds"><span class="octicon octicon-link"></span></a>Builds</h2>
+
+<p>This package uses <a href="http://gruntjs.com/">Grunt</a> to perform unit tests and builds.</p>
+
+<h3>
+<a name="building-the-library" class="anchor" href="#building-the-library"><span class="octicon octicon-link"></span></a>Building the Library</h3>
+
+<p>In order to build the angular-ua-security-state-manager.js library, run the command below.  This will create the uncompressed (dev) version and the minified version with a sourcemap file.</p>
+
+<p><code>grunt build</code></p>
+
+<h3>
+<a name="building-the-application" class="anchor" href="#building-the-application"><span class="octicon octicon-link"></span></a>Building the Application</h3>
+
+<p>In order to build the full web application, run the command below.  This will create the full HTML application with a mocked backend API for login to demonstrate how the library may be used.</p>
+
+<p><code>grunt build-app</code></p>
+
+<h2>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h2>
+
+<ul>
+<li>David Spies (<a href="https://github.com/dspies" class="user-mention">@dspies</a>)</li>
+</ul><h2>
+<a name="problems" class="anchor" href="#problems"><span class="octicon octicon-link"></span></a>Problems</h2>
+
+<p>Feel free to contact me with any questions or suggestions.  I will update the <a href="https://github.com/dspies/ua-security-state-manager/wiki">ua-security-state-manager wiki</a> in future with a roadmap.  If you have problems, please file an <a href="https://github.com/dspies/ua-security-state-manager/issues">issue</a> or better yet, file a pull request.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/dspies/ua-security-state-manager/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/dspies/ua-security-state-manager/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/dspies/ua-security-state-manager"></a> is maintained by <a href="https://github.com/dspies">dspies</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-49567032-3");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
