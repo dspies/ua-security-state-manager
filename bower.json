@@ -1,6 +1,22 @@
 {
   "name": "angular-ua-security-state-manager",
   "version": "0.0.1",
+  "main": "dist/angular-ua-security-state-manager.js",
+  "ignore": [
+    "app",
+    "test",
+    ".bowerrc",
+    ".editorconfig",
+    ".gitattributes",
+    ".gitignore",
+    ".jshintrc",
+    ".travis.yml",
+    "Gruntfile.js",
+    "bower.json",
+    "karma-e2e.conf.js",
+    "karma.conf.js",
+    "package.json"
+  ],
   "dependencies": {
     "angular": "~1.2.15",
     "angular-ui-router": "~0.2.10",
