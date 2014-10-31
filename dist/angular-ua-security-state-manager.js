@@ -1,6 +1,6 @@
 /**
  * 
- * @version v0.0.1 - 2014-04-28
+ * @version v0.0.1 - 2014-10-31
  * @link 
  * @author 
  * @license MIT License, http://www.opensource.org/licenses/MIT
