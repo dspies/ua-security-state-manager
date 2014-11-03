@@ -16,7 +16,7 @@ module.exports = function(config) {
       'app/bower_components/angular/angular.js',
       'app/bower_components/angular-mocks/angular-mocks.js',
       'app/bower_components/angular-ui-router/release/angular-ui-router.js',
-      'app/bower_components/ua-security/dist/ua-security.js',
+      'app/bower_components/angular-ua-security/dist/angular-ua-security.js',
       'app/scripts/app.js',
       'app/scripts/**/*.js',
       'test/helpers/*.js',
@@ -31,7 +31,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
 
 
     // enable / disable watching file and executing tests whenever any file changes
