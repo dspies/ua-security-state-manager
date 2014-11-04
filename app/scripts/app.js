@@ -1,7 +1,13 @@
 'use strict';
 
 angular.module('example', ['ua.security', 'ui.router', 'ngMockE2E'])
+
   .config(function ($stateProvider, $urlRouterProvider) {
+
+//  .config(function ($stateProvider, $urlRouterProvider, stateManagerProvider) {
+//    stateManagerProvider.setLoginStateName('myLogin');
+//    stateManagerProvider.setHomeStateName('myHome');
+//    stateManagerProvider.setUnauthorizedStateName('myUnauth');
 
     $urlRouterProvider.otherwise('/home');
 
