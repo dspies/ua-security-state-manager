@@ -1,6 +1,6 @@
 /**
  * 
- * @version v0.0.2 - 2014-11-04
+ * @version v0.1.0 - 2014-11-04
  * @link 
  * @author 
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -9,86 +9,102 @@
 	'use strict';
 
 	angular.module('ua.security')
-	  .factory('stateManager', ['securityService', '$state', '$rootScope', function (securityService,   $state,   $rootScope) {
+	  .provider('stateManager', [function stateManagerProvider(){
 	
-	    //TODO Make these properties configurable
 	    var loginStateName = 'login';
+	    this.setLoginStateName = function (stateName) {
+	      loginStateName = stateName;
+	    };
+	
 	    var homeStateName = 'home';
+	    this.setHomeStateName = function (stateName) {
+	      homeStateName = stateName;
+	    };
+	
 	    var unauthorizedStateName = 'unauthorized';
-	
-	    var loggedIn = function () {
-	      return securityService.isAuthenticated();
+	    this.setUnauthorizedStateName = function (stateName) {
+	      unauthorizedStateName = stateName;
 	    };
 	
-	    var goToLoginState = function () {
-	      $state.go(loginStateName);
-	    };
+	    function stateManagerFactory(securityService, $state, $rootScope) {
 	
-	    var goToHomeState = function () {
-	      $state.go(homeStateName);
-	    };
+	      var loggedIn = function () {
+	        return securityService.isAuthenticated();
+	      };
 	
-	    var goToUnauthorizedState = function () {
-	      $state.go(unauthorizedStateName);
-	    };
+	      var goToLoginState = function () {
+	        $state.go(loginStateName);
+	      };
 	
-	    var stateRequiresAuthorization = function(state){
-	      return 'roles' in state;
-	    };
+	      var goToHomeState = function () {
+	        $state.go(homeStateName);
+	      };
 	
-	    var authorizedToTransitionTo = function (toState) {
-	      return !stateRequiresAuthorization(toState) || currentUserIsAllowed(toState);
-	    };
+	      var goToUnauthorizedState = function () {
+	        $state.go(unauthorizedStateName);
+	      };
 	
-	    var currentUserIsAllowed = function (state) {
-	      return securityService.hasAnyRoles(state.roles);
-	    };
+	      var stateRequiresAuthorization = function(state){
+	        return 'roles' in state;
+	      };
 	
-	    //TODO Create overridable/configurable handler
-	    var stateChangeStartAuthorizationInterceptor = function(event, toState, toParams, fromState, fromParams) {
-	      if (!authorizedToTransitionTo(toState)){
-	        event.preventDefault();
+	      var authorizedToTransitionTo = function (toState) {
+	        return !stateRequiresAuthorization(toState) || currentUserIsAllowed(toState);
+	      };
 	
-	        //TODO Allow multiple 'unauthorizedStateChange' handlers (in order to perform functions like logging)
-	        unauthorizedStateChange(event, toState, toParams, fromState, fromParams);
-	      }
-	    };
+	      var currentUserIsAllowed = function (state) {
+	        return securityService.hasAnyRoles(state.roles);
+	      };
 	
-	    //TODO Create overridable/configurable handler
-	    var unauthorizedStateChange = function (event, toState, toParams, fromState) {
+	      //TODO Create overridable/configurable handler
+	      var stateChangeStartAuthorizationInterceptor = function(event, toState, toParams, fromState, fromParams) {
+	        if (!authorizedToTransitionTo(toState)){
+	          event.preventDefault();
 	
-	      if (!atLoginState(fromState)){
-	        if (loggedIn()){
-	          goToUnauthorizedState();
-	        } else {
-	          goToLoginState();
+	          //TODO Allow multiple 'unauthorizedStateChange' handlers (in order to perform functions like logging)
+	          unauthorizedStateChange(event, toState, toParams, fromState, fromParams);
 	        }
-	      }
-	    };
+	      };
 	
-	    var atLoginState = function (state) {
-	      return state.name === loginStateName;
-	    };
+	      //TODO Create overridable/configurable handler
+	      var unauthorizedStateChange = function (event, toState, toParams, fromState) {
 	
-	    var initialize = function() {
-	      //Register route authorization handler
-	      $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-	        stateChangeStartAuthorizationInterceptor(event, toState, toParams, fromState, fromParams);
-	      });
-	    };
+	        if (!atLoginState(fromState)){
+	          if (loggedIn()){
+	            goToUnauthorizedState();
+	          } else {
+	            goToLoginState();
+	          }
+	        }
+	      };
 	
-	    return {
-	      loggedIn: loggedIn,
-	      authorizedToTransitionTo: authorizedToTransitionTo,
-	      stateRequiresAuthorization: stateRequiresAuthorization,
-	      goToHomeState: goToHomeState,
-	      goToLoginState: goToLoginState,
-	      goToUnauthorizedState: goToUnauthorizedState,
-	      init: initialize
-	    };
+	      var atLoginState = function (state) {
+	        return state.name === loginStateName;
+	      };
 	
+	      var initialize = function() {
+	        //Register route authorization handler
+	        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+	          stateChangeStartAuthorizationInterceptor(event, toState, toParams, fromState, fromParams);
+	        });
+	      };
+	
+	      return {
+	        loggedIn: loggedIn,
+	        authorizedToTransitionTo: authorizedToTransitionTo,
+	        stateRequiresAuthorization: stateRequiresAuthorization,
+	        goToHomeState: goToHomeState,
+	        goToLoginState: goToLoginState,
+	        goToUnauthorizedState: goToUnauthorizedState,
+	        init: initialize
+	      };
+	
+	    }
+	    stateManagerFactory.$inject = ['securityService', '$state', '$rootScope'];
+	
+	    this.$get = stateManagerFactory;
 	  }])
-	  .run(['stateManager', function (stateManager) {
+	  .run(['stateManager', function stateManagerInitialization(stateManager){
 	    stateManager.init();
 	  }]);
 	
